@@ -1,0 +1,10 @@
+aws_region = "eu-central-1"
+instance_type = "t3.small" # recommended minimum size
+ssh_cidr = "0.0.0.0/32" # replace with your public IP
+# subnet_id = "subnet-0123456789abcdef0" # optional
+
+# if false, you must set key_name to an already existing AWS key pair's name
+# if true, uncomment public_key and give any name for the key
+create_key_pair = false
+key_name = "tf-mk8s-vm-key"
+# public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQ..." # replace with your public key
