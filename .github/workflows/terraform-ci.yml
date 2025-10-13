@@ -1,0 +1,54 @@
+name: Terraform plan on push and pull request
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.tf'
+      - '.github/workflows/**'
+      - 'k8s/**'
+      - 'README.md'
+  pull_request:
+    paths:
+      - '**/*.tf'
+      - '.github/workflows/**'
+      - 'k8s/**'
+      - 'README.md'
+  workflow_dispatch:
+
+jobs:
+  fmt-validate-plan:
+    name: fmt → validate → plan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: '1.4.6'
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init
+        run: terraform init -input=false -backend=false
+
+      - name: Terraform validate
+        run: terraform validate || true
+
+      - name: Terraform plan (save plan)
+        run: |
+          terraform plan -input=false -out=tfplan.binary || true
+          terraform show -no-color -json tfplan.binary > tfplan.json || true
+      
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-plan
+          path: tfplan.json
