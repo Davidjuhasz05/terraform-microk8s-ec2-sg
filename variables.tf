@@ -27,11 +27,6 @@ variable "public_key" {
   type        = string
   sensitive   = true
   default     = ""
-
-  validation {
-    condition     = var.create_key_pair ? (length(trimspace(var.public_key)) > 0) : true
-    error_message = "When create_key_pair = true you must provide a public_key (the public key contents)."
-  }
 }
 
 variable "create_key_pair" {
