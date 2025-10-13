@@ -40,8 +40,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: terraform version
+        run: terraform -version
+
       - name: Terraform fmt
-        run: terraform fmt -check -recursive
+        run: |
+          terraform fmt -list=true -write=false -diff=true || true
+          terraform fmt -check -recursive
 
       - name: Terraform init
         run: terraform init -input=false
