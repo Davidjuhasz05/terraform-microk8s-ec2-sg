@@ -33,7 +33,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Terraform init (reconfigure backend as needed)
+      - name: Terraform init
         run: terraform init -input=false
 
       - name: Terraform destroy (auto-approve)

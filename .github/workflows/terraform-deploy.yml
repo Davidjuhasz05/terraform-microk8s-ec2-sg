@@ -13,6 +13,11 @@ jobs:
     outputs:
       public_ip: ${{ steps.save-ip.outputs.public_ip }}
 
+    env:
+      TF_VAR_create_key_pair: true
+      TF_VAR_key_name: "tf-mk8s-vm-key"
+      TF_VAR_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v5
