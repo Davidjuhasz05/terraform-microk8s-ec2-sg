@@ -38,7 +38,6 @@ EOF
 # apply kubernetes manifests
 microk8s kubectl apply -f /home/ubuntu/k8s/namespace.yaml
 microk8s kubectl apply -f /home/ubuntu/k8s/nginx-deployment.yaml
-# microk8s kubectl apply -f /home/ubuntu/k8s/ingress.yaml
 
 # install nginx on host for a simple demo page
 apt-get install -y nginx || true
