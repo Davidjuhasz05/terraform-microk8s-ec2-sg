@@ -20,15 +20,31 @@ microk8s config > /home/ubuntu/.kube/config || true
 chown -R ubuntu:ubuntu /home/ubuntu/.kube || true
 
 # enable addons
-microk8s enable dns ingress || true
+microk8s enable dns || true
 
-# prepare k8s folder where CI will copy manifests
+# prepare k8s folder where manifests will be stored
 mkdir -p /home/ubuntu/k8s
 chown -R ubuntu:ubuntu /home/ubuntu/k8s
 
+# write kubernetes yaml files from terraform templates
+cat > /home/ubuntu/k8s/nginx-deployment.yaml <<'EOF'
+${deployment_yaml}
+EOF
+
+cat > /home/ubuntu/k8s/namespace.yaml <<'EOF'
+${namespace_yaml}
+EOF
+
+# apply kubernetes manifests
+microk8s kubectl apply -f /home/ubuntu/k8s/namespace.yaml
+microk8s kubectl apply -f /home/ubuntu/k8s/nginx-deployment.yaml
+# microk8s kubectl apply -f /home/ubuntu/k8s/ingress.yaml
+
 # install nginx on host for a simple demo page
 apt-get install -y nginx || true
-systemctl enable --now nginx || true
+mkdir -p /var/www/html
+chown -R ubuntu:ubuntu /var/www/html
+
 cat > /var/www/html/index.html <<'EOF'
 <html>
   <head><title>Terraform + Microk8s demo</title></head>
@@ -39,3 +55,5 @@ cat > /var/www/html/index.html <<'EOF'
   </body>
 </html>
 EOF
+
+systemctl enable --now nginx || true

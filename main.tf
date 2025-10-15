@@ -7,6 +7,11 @@ data "aws_ami" "ubuntu" {
   }
 }
 
+locals {
+  deployment_yaml = file("${path.module}/k8s/nginx-deployment.yaml")
+  namespace_yaml  = file("${path.module}/k8s/namespace.yaml")
+}
+
 resource "aws_instance" "vm" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
@@ -15,7 +20,10 @@ resource "aws_instance" "vm" {
 
   key_name = var.key_name
 
-  user_data = file("${path.module}/user-data.sh")
+  user_data = templatefile("${path.module}/user-data.sh", {
+    deployment_yaml = local.deployment_yaml
+    namespace_yaml  = local.namespace_yaml
+  })
 
   tags = merge(var.tags, { "Name" = "tf-mk8s-vm" })
 }
