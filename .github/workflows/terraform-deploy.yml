@@ -1,4 +1,4 @@
-name: Terraform apply + deploy k8s manifests
+name: Terraform apply
 
 on:
   workflow_dispatch:
